@@ -1,0 +1,33 @@
+name: partsbuff
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: partsbuff
+      POSTGRES_USER: partsbuff
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U partsbuff -d partsbuff"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: partsbuff
+      PGUSER: partsbuff
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  postgres_data:

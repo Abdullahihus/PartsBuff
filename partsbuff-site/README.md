@@ -1,44 +1,57 @@
 # PartsBuff
 
-A modern Next.js starter for PartsBuff — used auto parts, part-out vehicles, vehicle listings, services, inquiries, and an admin dashboard shell.
+Next.js site with PostgreSQL inventory and saved customer inquiries. The database starts empty; no sample vehicles or parts are inserted.
 
-## Run locally
+## Run with Docker (WSL/Linux)
 
-1. Install Node.js 24+
-2. Open this folder in VS Code
-3. Run:
-   ```bash
-   npm install
-   npm run dev
-   ```
-4. Visit `http://localhost:3000`
+Make sure Docker is running and Docker Compose is available in your WSL/Linux terminal. From the cloned repository root, run:
 
-## Included
-- Responsive PartsBuff homepage
-- Vehicle / part-out inventory
-- Dynamic vehicle detail pages
-- Used parts table
-- Services page
-- Contact / part request form
-- API route for inquiry submissions
-- Admin dashboard UI shell
-- PostgreSQL starter schema in `db/schema.sql`
-- Local placeholder vehicle artwork (no copied business assets)
+```bash
+cd partsbuff-site
+cp .env.example .env
+```
 
-## Next production steps
-1. Create Supabase/PostgreSQL project.
-2. Apply `db/schema.sql`.
-3. Replace `data/inventory.ts` with database queries.
-4. Save `/api/inquiries` submissions to the database and/or email.
-5. Add Supabase Auth to `/admin`.
-6. Add image uploads with Supabase Storage.
-7. Add real PartsBuff address, phone, business hours, logo, inventory, and domain.
+Edit POSTGRES_PASSWORD in .env, then run:
 
-## Stack
-- Next.js 16.3.3
-- React 19.2
-- TypeScript
-- Plain responsive CSS (no UI dependency required)
-- PostgreSQL/Supabase-ready schema
+```bash
+docker compose up --build -d
+docker compose logs -f web
+```
 
-This starter uses original PartsBuff branding and sample content rather than copying BMR Auto's branding, copy, or images.
+Open http://localhost:3000. Node runs inside the container; no local Node installation is required.
+
+```bash
+docker compose ps
+docker compose down
+```
+
+Stopping containers preserves the database in a named volume. Do not use `docker compose down -v` unless you intend to erase the local database.
+The database is only accessible inside Docker; the website binds to localhost.
+
+## Database
+
+Tables: vehicles, vehicle_images, parts, inquiries. The schema initializes automatically on the first start with a fresh volume. Later schema changes require migrations; restarting does not reapply schema.sql. Changing the password in .env does not change an existing database user's password.
+
+Open a local SQL console:
+
+```bash
+docker compose exec db psql -U partsbuff -d partsbuff
+```
+
+Check empty inventory or saved requests:
+
+```sql
+SELECT count(*) FROM vehicles;
+SELECT count(*) FROM parts;
+SELECT id, subject, created_at FROM inquiries ORDER BY created_at DESC;
+```
+
+No inventory is required to accept part requests. New database records appear on the next page request. Only parts with status Available appear in the parts catalog. Missing vehicle photos use a neutral placeholder.
+
+The admin page is a placeholder. Authentication, inventory editing, image uploads, and public deployment protections are future work; customer inquiries are not exposed through a public read API.
+
+## Development and checks
+
+With Node 24 installed, use `npm ci`, `npm run typecheck`, and `npm run build`. Set DATABASE_URL in .env.local to use a reachable PostgreSQL server for local development.
+
+Docker uses a standalone Next.js build. Rebuild with `docker compose up --build -d` after code changes.

@@ -1,2 +1,6 @@
-import { formatMoney, vehicles } from "@/data/inventory";
-export default function Admin(){return <section className="section shell"><div className="admin-top"><div><div className="eyebrow">ADMIN PREVIEW</div><h1>Inventory dashboard</h1><p>This is the UI shell for the authenticated admin area.</p></div><button className="button">+ Add vehicle</button></div><div className="admin-stats"><div><span>Total inventory</span><strong>{vehicles.length}</strong></div><div><span>For sale</span><strong>{vehicles.filter(v=>v.status==='For Sale').length}</strong></div><div><span>Part outs</span><strong>{vehicles.filter(v=>v.status==='Part Out').length}</strong></div></div><div className="table-card"><div className="admin-row admin-head"><span>Vehicle</span><span>Status</span><span>Stock</span><span>Price</span><span>Action</span></div>{vehicles.map(v=><div className="admin-row" key={v.id}><span><strong>{v.year} {v.make} {v.model}</strong><small>{v.trim}</small></span><span>{v.status}</span><span>{v.stock}</span><span>{v.price?formatMoney(v.price):'—'}</span><span><button className="mini-button">Edit</button></span></div>)}</div><p className="admin-note">Next step: protect this route with Supabase Auth and replace sample data with PostgreSQL records.</p></section>}
+export default function Admin() {
+  return <section className="section shell"><div className="page-hero">
+    <div className="eyebrow">ADMIN</div><h1>Inventory management is coming soon</h1>
+    <p>The database is ready for your inventory. An authenticated dashboard is the next step.</p>
+  </div></section>;
+}

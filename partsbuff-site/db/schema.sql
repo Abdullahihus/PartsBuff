@@ -15,6 +15,8 @@ CREATE TABLE vehicles (
   drivetrain TEXT,
   color TEXT,
   description TEXT,
+  location TEXT,
+  highlights TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

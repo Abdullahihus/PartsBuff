@@ -1,8 +1,11 @@
 import Link from "next/link";
 import VehicleCard from "@/components/VehicleCard";
-import { vehicles } from "@/data/inventory";
+import { getVehicles } from "@/lib/inventory";
+import EmptyInventory from "@/components/EmptyInventory";
+export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const vehicles = await getVehicles();
   const featured = vehicles.slice(0, 3);
   return (
     <>
@@ -24,14 +27,8 @@ export default function Home() {
             <div className="search-card">
               <div className="eyebrow">PART FINDER</div>
               <h2>What are you working on?</h2>
-              <div className="finder-grid">
-                <div><span>Year</span><strong>2020</strong></div>
-                <div><span>Make</span><strong>Toyota</strong></div>
-                <div><span>Model</span><strong>Camry</strong></div>
-                <div><span>Part</span><strong>Headlight</strong></div>
-              </div>
-              <Link href="/contact" className="button button-wide">Find this part</Link>
-              <p className="microcopy">Demo search flow — connect this to your live inventory database next.</p>
+              <p>Tell us your vehicle year, make, model, and the part you need.</p><Link href="/contact" className="button button-wide">Request a part</Link>
+              <p className="microcopy">Send a request and we will help check availability.</p>
             </div>
           </div>
         </div>
@@ -42,7 +39,7 @@ export default function Home() {
           <div><div className="eyebrow">INVENTORY</div><h2>What’s available now</h2></div>
           <Link href="/inventory" className="text-link">View all inventory →</Link>
         </div>
-        <div className="card-grid">{featured.map(vehicle => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}</div>
+        {featured.length === 0 && <EmptyInventory />}<div className="card-grid">{featured.map(vehicle => <VehicleCard key={vehicle.id} vehicle={vehicle} />)}</div>
       </section>
 
       <section className="section soft-section">

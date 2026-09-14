@@ -7,7 +7,7 @@ export type Vehicle = {
   make: string;
   model: string;
   trim: string;
-  mileage: number;
+  mileage: number | null;
   price: number | null;
   status: VehicleStatus;
   stock: string;
@@ -28,6 +28,6 @@ export type Part = {
   category: string;
   vehicle: string;
   condition: string;
-  price: number;
+  price: number | null;
   stock: string;
 };

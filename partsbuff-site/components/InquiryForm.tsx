@@ -8,7 +8,8 @@ export default function InquiryForm({ subject = "Parts inquiry" }: { subject?: s
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
-    const form = new FormData(e.currentTarget);
+    const formElement = e.currentTarget;
+    const form = new FormData(formElement);
     const payload = Object.fromEntries(form.entries());
 
     try {
@@ -19,7 +20,7 @@ export default function InquiryForm({ subject = "Parts inquiry" }: { subject?: s
       });
       if (!res.ok) throw new Error("Request failed");
       setStatus("sent");
-      e.currentTarget.reset();
+      formElement.reset();
     } catch {
       setStatus("error");
     }
